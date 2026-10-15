@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квантовый Компьютер 1000 кубитов ⚛️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: radial-gradient(ellipse at center, #0a0a2e 0%, #000000 80%);
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            font-size: 18px;
+            color: #00ffff;
+            text-shadow: 3px 3px 0 #000, 0 0 30px #00ffff, 0 0 60px #0088ff;
+            margin-bottom: 10px;
+            text-align: center;
+            line-height: 1.6;
+            animation: quantumGlow 2s infinite alternate;
+        }
+
+        @keyframes quantumGlow {
+            from { text-shadow: 3px 3px 0 #000, 0 0 20px #00ffff; }
+            to { text-shadow: 3px 3px 0 #000, 0 0 40px #00ffff, 0 0 80px #0088ff; }
+        }
+
+        .subtitle {
+            font-size: 8px;
+            color: #9b59b6;
+            text-shadow: 0 0 12px #9b59b6;
+            margin-bottom: 25px;
+            text-align: center;
+            line-height: 1.9;
+        }
+
+        /* КОНТЕЙНЕР */
+        .quantum-computer {
+            background: linear-gradient(180deg, #0a0a2e 0%, #050518 100%);
+            border: 4px solid #00ffff;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 0 60px rgba(0, 255, 255, 0.6), inset 0 0 40px rgba(0, 255, 255, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quantum-computer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 255, 0.05) 2px,
+                rgba(0, 255, 255, 0.05) 4px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .qc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed #00ffff;
+            position: relative;
+            z-index: 2;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .qc-title {
+            font-size: 12px;
+            color: #00ffff;
+            text-shadow: 0 0 15px #00ffff;
+        }
+
+        .qc-status {
+            font-size: 7px;
+            color: #2ecc71;
+            padding: 5px 10px;
+            border: 1px solid #2ecc71;
+            border-radius: 4px;
+            background: rgba(46, 204, 113, 0.1);
+            text-shadow: 0 0 8px #2ecc71;
+        }
+
+        .qc-status.offline {
+            color: #e74c3c;
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+            text-shadow: 0 0 8px #e74c3c;
+        }
+
+        .qc-status.running {
+            color: #f1c40f;
+            border-color: #f1c40f;
+            background: rgba(241, 196, 15, 0.1);
+            text-shadow: 0 0 8px #f1c40f;
+            animation: statusPulse 1s infinite alternate;
+        }
+
+        @keyframes statusPulse {
+            from { box-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
+            to { box-shadow: 0 0 25px rgba(241, 196, 15, 1); }
+        }
+
+        /* КУБИТЫ */
+        .qubits-section {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-label {
+            font-size: 8px;
+            color: #f1c40f;
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px #f1c40f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .qubits-grid {
+            display: grid;
+            grid-template-columns: repeat(50, 1fr);
+            gap: 3px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #9b59b6;
+            border-radius: 8px;
+            max-height: 320px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 20px rgba(155, 89, 182, 0.3);
+        }
+
+        .qubits-grid::-webkit-scrollbar { width: 8px; }
+        .qubits-grid::-webkit-scrollbar-track { background: #0a0a15; }
+        .qubits-grid::-webkit-scrollbar-thumb { background: #9b59b6; border-radius: 4px; }
+
+        .qubit {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: radial-gradient(circle, #00ffff, #0088ff);
+            box-shadow: 0 0 4px #00ffff;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+            min-width: 8px;
+            min-height: 8px;
+        }
+
+        .qubit:hover {
+            transform: scale(1.5);
+            z-index: 10;
+            box-shadow: 0 0 12px #00ffff;
+        }
+
+        .qubit.active {
+            background: radial-gradient(circle, #f1c40f, #e74c3c);
+            box-shadow: 0 0 8px #f1c40f, 0 0 16px #e74c3c;
+        }
+
+        .qubit.entangled {
+            background: radial-gradient(circle, #9b59b6, #8e44ad);
+            box-shadow: 0 0 8px #9b59b6, 0 0 16px #8e44ad;
+        }
+
+        .qubit.error {
+            background: radial-gradient(circle, #e74c3c, #c0392b);
+            box-shadow: 0 0 8px #e74c3c;
+            animation: errorPulse 0.3s infinite;
+        }
+
+        @keyframes errorPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* СТАТИСТИКА */
+        .qc-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .qc-stat {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00ffff;
+            border-radius: 6px;
+            padding: 10px 8px;
+            font-size: 7px;
+            color: #00ffff;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .qc-stat.active {
+            border-color: #f1c40f;
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
+        }
+
+        .qc-stat span {
+            display: block;
+            font-size: 11px;
+            color: #f1c40f;
+            margin-top: 5px;
+            text-shadow: 0 0 10px #f1c40f;
+        }
+
+        /* ПРОГРЕСС-БАР */
+        .progress-container {
+            background: #000;
+            border: 2px solid #00ffff;
+            border-radius: 5px;
+            height: 28px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            z-index: 2;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #9b59b6, #f1c40f);
+            width: 0%;
+            transition: width 0.3s;
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8px;
+            color: #fff;
+            text-shadow: 1px 1px 0 #000, 0 0 10px #00ffff;
+            z-index: 2;
+        }
+
+        /* КНОПКИ */
+        .buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00ffff 0%, #0088ff 100%);
+            color: #000;
+            border: 2px solid #fff;
+            padding: 10px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 1);
+        }
+
+        .btn:active { transform: scale(0.95); }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-red {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: #fff;
+        }
+
+        .btn-purple {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: #fff;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%);
+        }
+
+        /* ЛОГ */
+        .log {
+            background: #000;
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 7px;
+            color: #00ffff;
+            max-height: 150px;
+            overflow-y: auto;
+            line-height: 2;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            z-index: 2;
+        }
+
+        .log-entry { margin-bottom: 4px; }
+        .log-success { color: #2ecc71; }
+        .log-error { color: #e74c3c; }
+        .log-info { color: #00ffff; }
+        .log-warn { color: #f1c40f; }
+        .log-quantum { color: #9b59b6; text-shadow: 0 0 8px #9b59b6; }
+        .log-mail { color: #ff69b4; text-shadow: 0 0 8px #ff69b4; }
+
+        .footer {
+            font-size: 7px;
+            color: #444;
+            text-align: center;
+            line-height: 2;
+            margin-top: 20px;
+            max-width: 700px;
+        }
+
+        @media (max-width: 700px) {
+            h1 { font-size: 12px; }
+            .qubits-grid { grid-template-columns: repeat(25, 1fr); }
+            .btn { font-size: 6px; padding: 8px 10px; }
+            .qc-stat { font-size: 6px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>⚛️ КВАНТОВЫЙ КОМПЬЮТЕР ⚛️</h1>
+    <div class="subtitle">
+        ✦ 1000 кубитов · Квантовые вычисления · Запутанность ✦<br>
+        Симулятор квантового ядра
+    </div>
+
+    <div class="quantum-computer">
+        <div class="qc-header">
+            <div class="qc-title">⚛️ QUANTUM CORE · 1000 QUBITS</div>
+            <div class="qc-status offline" id="status">🔴 OFFLINE</div>
+        </div>
+
+        <!-- КУБИТЫ -->
+        <div class="qubits-section">
+            <div class="section-label">
+                <span>🔵 КУБИТЫ (1000)</span>
+                <span id="activeCount">Активно: 0 / 1000</span>
+            </div>
+            <div class="qubits-grid" id="qubitsGrid"></div>
+        </div>
+
+        <!-- СТАТИСТИКА -->
+        <div class="qc-stats">
+            <div class="qc-stat">
+                КУБИТОВ
+                <span id="qubitsCount">1000</span>
+            </div>
+            <div class="qc-stat">
+                ТЕМПЕРАТУРА
+                <span id="temp">-273°C</span>
+            </div>
+            <div class="qc-stat">
+                ЗАПУТАННОСТЬ
+                <span id="entanglement">0%</span>
+            </div>
+            <div class="qc-stat">
+                СКОРОСТЬ
+                <span id="speed">0 Q/s</span>
+            </div>
+            <div class="qc-stat">
+                ОПЕРАЦИЙ
+                <span id="operations">0</span>
+            </div>
+            <div class="qc-stat">
+                ТОЧНОСТЬ
+                <span id="accuracy">99.99%</span>
+            </div>
+        </div>
+
+        <!-- ПРОГРЕСС -->
+        <div class="progress-container">
+            <div class="progress-fill" id="progressFill"></div>
+            <div class="progress-text" id="progressText">0% · ЯДРО ВЫКЛЮЧЕНО</div>
+        </div>
+
+        <!-- КНОПКИ -->
+        <div class="buttons">
+            <button class="btn" id="startBtn" onclick="startQuantum()">⚛️ ЗАПУСТИТЬ</button>
+            <button class="btn btn-purple" id="entangleBtn" onclick="entangleQubits()" disabled>🔗 ЗАПУТАТЬ</button>
+            <button class="btn btn-gold" id="computeBtn" onclick="runComputation()" disabled>💻 ВЫЧИСЛИТЬ</button>
+            <button class="btn btn-red" id="stopBtn" onclick="stopQuantum()" disabled>🛑 СТОП</button>
+        </div>
+
+        <!-- ЛОГ -->
+        <div class="log" id="log">
+            <div class="log-entry log-info">[SYS] Симулятор квантового компьютера готов</div>
+            <div class="log-entry log-warn">[SYS] 1000 кубитов инициализированы</div>
+            <div class="log-entry log-quantum">[QC] Ожидание запуска ядра...</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        ⚛️ Квантовый Компьютер 1000 кубитов · Христодоллары<br>
+        Симулятор для развлечения. Не является реальным квантовым компьютером.
+    </div>
+
+<script>
+    // === КВАНТОВЫЙ КОМПЬЮТЕР ===
+    const TOTAL_QUBITS = 1000;
+    let activeQubits = 0;
+    let entangledPairs = 0;
+    let progress = 0;
+    let running = false;
+    let runInterval = null;
+    let computeInterval = null;
+    let operations = 0;
+
+    const qubitsGrid = document.getElementById('qubitsGrid');
+    const statusEl = document.getElementById('status');
+    const activeCountEl = document.getElementById('activeCount');
+    const entanglementEl = document.getElementById('entanglement');
+    const tempEl = document.getElementById('temp');
+    const speedEl = document.getElementById('speed');
+    const operationsEl = document.getElementById('operations');
+    const accuracyEl = document.getElementById('accuracy');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const logEl = document.getElementById('log');
+    const startBtn = document.getElementById('startBtn');
+    const entangleBtn = document.getElementById('entangleBtn');
+    const computeBtn = document.getElementById('computeBtn');
+    const stopBtn = document.getElementById('stopBtn');
+
+    const qubitElements = [];
+
+    // === СОЗДАНИЕ 1000 КУБИТОВ ===
+    function createQubits() {
+        qubitsGrid.innerHTML = '';
+        qubitElements.length = 0;
+
+        for (let i = 0; i < TOTAL_QUBITS; i++) {
+            const qubit = document.createElement('div');
+            qubit.className = 'qubit';
+            qubit.dataset.index = i;
+            qubit.title = 'Кубит #' + (i + 1);
+            qubit.onclick = () => toggleQubit(i);
+            qubitsGrid.appendChild(qubit);
+            qubitElements.push(qubit);
+        }
+    }
+
+    function toggleQubit(index) {
+        const qubit = qubitElements[index];
+        if (qubit.classList.contains('active')) {
+            qubit.classList.remove('active');
+            activeQubits--;
+        } else {
+            qubit.classList.add('active');
+            activeQubits++;
+        }
+        updateStats();
+    }
+
+    // === ЗАПУСК КВАНТОВОГО ЯДРА ===
+    function startQuantum() {
+        if (running) return;
+        running = true;
+
+        startBtn.disabled = true;
+        entangleBtn.disabled = false;
+        computeBtn.disabled = false;
+        stopBtn.disabled = false;
+
+        statusEl.className = 'qc-status running';
+        statusEl.textContent = '🟡 RUNNING';
+
+        addLog('[SYS] ⚛️ ЗАПУСК КВАНТОВОГО ЯДРА...', 'log-success');
+        addLog('[SYS] Охлаждение до -273°C...', 'log-info');
+
+        let i = 0;
+        const activateInterval = setInterval(() => {
+            if (i >= TOTAL_QUBITS || !running) {
+                clearInterval(activateInterval);
+                if (running) {
+                    addLog('[SYS] ✅ 1000 кубитов активны', 'log-success');
+                    statusEl.className = 'qc-status';
+                    statusEl.textContent = '🟢 ONLINE';
+                }
+                return;
+            }
+
+            qubitElements[i].classList.add('active');
+            activeQubits++;
+            i++;
+
+            if (i % 20 === 0) {
+                updateStats();
+                progress = (i / TOTAL_QUBITS) * 100;
+                progressFill.style.width = progress + '%';
+                progressText.textContent = Math.floor(progress) + '% · АКТИВАЦИЯ КУБИТОВ';
+            }
+
+            if (i % 100 === 0) {
+                addLog(`[QC] Активировано ${i} кубитов...`, 'log-quantum');
+            }
+        }, 15);
+
+        runInterval = setInterval(() => {
+            if (!running) return;
+
+            const speed = Math.floor(activeQubits * 1000 + Math.random() * 50000);
+            speedEl.textContent = formatSpeed(speed);
+
+            const temp = -273 + Math.random() * 0.5;
+            tempEl.textContent = temp.toFixed(2) + '°C';
+
+            const accuracy = 99.9 + Math.random() * 0.09;
+            accuracyEl.textContent = accuracy.toFixed(2) + '%';
+
+            if (Math.random() < 0.1) {
+                const msgs = [
+                    '[QC] Когерентность стабильна',
+                    '[QC] Квантовый шум в норме',
+                    '[QC] Коррекция ошибок активна',
+                    '[QC] Квантовый параллелизм работает',
+                    '[QC] Амплитуды обновлены',
+                    '[SYS] Температура стабильна',
+                    '[QC] Суперпозиция активна'
+                ];
+                addLog(msgs[Math.floor(Math.random() * msgs.length)], 'log-quantum');
+            }
+        }, 800);
+    }
+
+    // === ЗАПУТАННОСТЬ ===
+    function entangleQubits() {
+        if (!running) return;
+
+        const indices = [];
+
+        for (let i = 0; i < TOTAL_QUBITS; i++) {
+            if (qubitElements[i].classList.contains('active')) {
+                indices.push(i);
+            }
+        }
+
+        indices.sort(() => Math.random() - 0.5);
+
+        const pairs = Math.floor(indices.length / 2);
+        const toEntangle = Math.min(pairs, 300);
+
+        addLog(`[QC] 🔗 Запутывание ${toEntangle * 2} кубитов...`, 'log-quantum');
+
+        let i = 0;
+        const entangleInterval = setInterval(() => {
+            if (i >= toEntangle * 2 || !running) {
+                clearInterval(entangleInterval);
+                if (running) {
+                    entangledPairs = toEntangle;
+                    addLog(`[QC] ✅ Создано ${toEntangle} запутанных пар`, 'log-success');
+                    updateStats();
+                }
+                return;
+            }
+
+            const idx = indices[i];
+            qubitElements[idx].classList.remove('active');
+            qubitElements[idx].classList.add('entangled');
+            i++;
+
+            if (i % 50 === 0) {
+                addLog(`[QC] Запутано ${i} кубитов...`, 'log-quantum');
+            }
+        }, 8);
+    }
+
+    // === КВАНТОВОЕ ВЫЧИСЛЕНИЕ ===
+    function runComputation() {
+        if (!running) return;
+
+        addLog('[SYS] 💻 ЗАПУСК КВАНТОВОГО ВЫЧИСЛЕНИЯ...', 'log-success');
+        addLog('[QC] Применение алгоритма Шора...', 'log-quantum');
+
+        let step = 0;
+        const steps = [
+            'Инициализация суперпозиции',
+            'Применение оракула',
+            'Квантовое преобразование Фурье',
+            'Измерение состояния',
+            'Обработка результатов',
+            'Верификация ответа',
+            'Вычисление завершено'
+        ];
+
+        computeInterval = setInterval(() => {
+            if (step >= steps.length || !running) {
+                clearInterval(computeInterval);
+                if (running) {
+                    operations += 1000000 + Math.floor(Math.random() * 5000000);
+                    operationsEl.textContent = formatOperations(operations);
+                    addLog('✅ [QC] ВЫЧИСЛЕНИЕ ЗАВЕРШЕНО', 'log-success');
+                    addLog(`[SYS] Операций: +${formatOperations(1000000 + Math.floor(Math.random() * 5000000))}`, 'log-info');
+                    progress = 100;
+                    progressFill.style.width = '100%';
+                    progressText.textContent = '100% · ВЫЧИСЛЕНО';
+                }
+                return;
+            }
+
+            addLog(`[QC] ${steps[step]}...`, 'log-quantum');
+            step++;
+
+            progress = (step / steps.length) * 100;
+            progressFill.style.width = progress + '%';
+            progressText.textContent = Math.floor(progress) + '% · ВЫЧИСЛЕНИЕ';
+        }, 700);
+    }
+
+    // === ОСТАНОВКА ===
+    function stopQuantum() {
+        if (!running) return;
+
+        running = false;
+        clearInterval(runInterval);
+        clearInterval(computeInterval);
+
+        statusEl.className = 'qc-status offline';
+        statusEl.textContent = '🔴 OFFLINE';
+
+        startBtn.disabled = false;
+        entangleBtn.disabled = true;
+        computeBtn.disabled = true;
+        stopBtn.disabled = true;
+
+        addLog('[SYS] 🛑 Квантовое ядро остановлено', 'log-error');
+        addLog('[QC] Кубиты возвращены в исходное состояние', 'log-info');
+
+        progressFill.style.width = '0%';
+        progressText.textContent = '0% · ЯДРО ВЫКЛЮЧЕНО';
+
+        qubitElements.forEach(q => {
+            q.classList.remove('active');
+            q.classList.remove('entangled');
+        });
+        activeQubits = 0;
+        updateStats();
+    }
+
+    // === ОБНОВЛЕНИЕ СТАТИСТИКИ ===
+    function updateStats() {
+        activeCountEl.textContent = `Активно: ${activeQubits} / 1000`;
+        const entanglePercent = Math.min(100, Math.floor((entangledPairs * 2 / activeQubits) * 100) || 0);
+        entanglementEl.textContent = entanglePercent + '%';
+    }
+
+    function formatSpeed(speed) {
+        if (speed > 1e12) return (speed / 1e12).toFixed(2) + ' TQ/s';
+        if (speed > 1e9) return (speed / 1e9).toFixed(2) + ' GQ/s';
+        if (speed > 1e6) return (speed / 1e6).toFixed(2) + ' MQ/s';
+        if (speed > 1e3) return (speed / 1e3).toFixed(2) + ' KQ/s';
+        return speed + ' Q/s';
+    }
+
+    function formatOperations(ops) {
+        if (ops > 1e12) return (ops / 1e12).toFixed(2) + 'T';
+        if (ops > 1e9) return (ops / 1e9).toFixed(2) + 'B';
+        if (ops > 1e6) return (ops / 1e6).toFixed(2) + 'M';
+        if (ops > 1e3) return (ops / 1e3).toFixed(2) + 'K';
+        return ops;
+    }
+
+    function addLog(text, type) {
+        const div = document.createElement('div');
+        div.className = 'log-entry ' + (type || '');
+        div.textContent = text;
+        logEl.appendChild(div);
+        logEl.scrollTop = logEl.scrollHeight;
+
+        while (logEl.children.length > 40) {
+            logEl.removeChild(logEl.firstChild);
+        }
+    }
+
+    // === СТАРТ ===
+    createQubits();
+    updateStats();
+</script>
+
+</body>
+</html>
